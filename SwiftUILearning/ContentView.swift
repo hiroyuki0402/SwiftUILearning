@@ -22,9 +22,11 @@ struct ContentView: View {
     /// 画面遷移先の取得
     /// - Parameter index: 遷移するインデックス
     /// - Returns: 画面名
-    func destination(index: Int) -> String {
-        guard let view = LearningItme(rawValue: index)?.destination() else { return "" }
-        return view
+    func destination(index: Int) -> AnyView {
+        if let view = LearningItme(rawValue: index)?.destination() {
+            return AnyView(view)
+        }
+        return AnyView(self)
     }
 
     /**
@@ -33,13 +35,16 @@ struct ContentView: View {
      [SwiftUI を理解するために必要な Swift 5.1 の新機能 (some View編)](https://speakerdeck.com/kumamotone/swiftui-woli-jie-surutamenibi-yao-na-swift-5-dot-1-falsexin-ji-neng-some-viewbian)
      */
     var body: some View {
-        NavigationView {
-            List(0..<LearningItme.allCases.count, id: \.self) { index in
-                NavigationLink(destination: Text(destination(index: index))) {
-                    Text(title(index: index))
+        NavigationStack {
+                List(0..<LearningItme.allCases.count, id: \.self) { index in
+                    NavigationLink(destination: destination(index: index)) {
+                        Text(title(index: index))
                 }
             }
+                .navigationTitle("Navihgation")
+                .navigationBarTitleDisplayMode(.inline)
         }
+
     }
 }
 
@@ -85,24 +90,24 @@ enum LearningItme: Int, CaseIterable {
     }
         /// 遷移先
         /// - Returns: 遷移先のファイル名
-        func destination() -> String {
+    func destination() -> any View {
             switch self {
             case .helloWord:
-                return "HelloWordView"
+                return HelloWordView()
             case .countup:
-                return "CountUpView"
+                return CountUpView()
             case .todo:
-                return "TODOView"
+                return TODOView()
             case .api:
-                return "APIView"
+                return APIView()
             case .firebase:
-                return "FireBaseView"
+                return FireBaseView()
             case .map:
-                return "MapView"
+                return MapView()
             case .camera:
-                return "CameraView"
+                return CameraView()
             case .chat:
-                return "ChatView"
+                return ChatView()
             }
         }
     }
